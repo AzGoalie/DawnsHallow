@@ -8,7 +8,7 @@ public class DawnsHallow : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UnrealFastNoisePlugin", "ProceduralMeshComponent" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UnrealFastNoisePlugin", "ProceduralMeshComponent", "PolyVoxPlugin" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
