@@ -8,33 +8,33 @@
 
 using namespace PolyVox;
 
-struct FPolyVoxVector : public FVector
+struct FPolyVoxVector : FVector
 {
 	FORCEINLINE FPolyVoxVector()
 	{
 	}
 
-	explicit FORCEINLINE FPolyVoxVector(EForceInit E)
+	explicit FORCEINLINE FPolyVoxVector(const EForceInit E)
 		: FVector(E)
 	{
 	}
 
-	FORCEINLINE FPolyVoxVector(float InX, float InY, float InZ)
-		: FVector(InX, InY, InX)
+	explicit FORCEINLINE FPolyVoxVector(const float InX, const float InY, const float InZ)
+		: FVector(InX, InY, InZ)
 	{
 	}
 
-	FORCEINLINE FPolyVoxVector(const FVector& InVec)
+	explicit FORCEINLINE FPolyVoxVector(const FVector& InVec)
 	{
 		FVector::operator=(InVec);
 	}
 
-	FORCEINLINE FPolyVoxVector(const PolyVox::Vector3DFloat& InVec)
+	explicit FORCEINLINE FPolyVoxVector(const Vector3DFloat& InVec)
 	{
-		FPolyVoxVector::operator=(InVec);
+		operator=(InVec);
 	}
 
-	FORCEINLINE FVector& operator=(const PolyVox::Vector3DFloat& Other)
+	FORCEINLINE FVector& operator=(const Vector3DFloat& Other)
 	{
 		this->X = Other.getX();
 		this->Y = Other.getY();
@@ -64,7 +64,7 @@ void AVoxelWorld::BeginPlay()
 }
 
 // Called every frame
-void AVoxelWorld::Tick(float DeltaTime)
+void AVoxelWorld::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
@@ -87,27 +87,27 @@ void AVoxelWorld::GenerateWorld()
 	int32 NumIndices = DecodedMesh.getNoOfIndices();
 	UE_LOG(LogTemp, Error, TEXT("%d indices"), NumIndices)
 
-	for (int32 i = 0; i < NumIndices; i++)
+	for (auto i = 0; i < NumIndices; i++)
 	{
 		auto Index0 = DecodedMesh.getIndex(i++);
 		auto Index1 = DecodedMesh.getIndex(i++);
 		auto Index2 = DecodedMesh.getIndex(i);
 
 		auto Vertex0 = DecodedMesh.getVertex(Index0);
-		FVector V0 = FPolyVoxVector(Vertex0.position) * VoxelSize;
+		auto V0 = FPolyVoxVector(Vertex0.position) * VoxelSize;
 
 		auto Vertex1 = DecodedMesh.getVertex(Index1);
-		FVector V1 = FPolyVoxVector(Vertex1.position) * VoxelSize;
+		auto V1 = FPolyVoxVector(Vertex1.position) * VoxelSize;
 
 		auto Vertex2 = DecodedMesh.getVertex(Index2);
-		FVector V2 = FPolyVoxVector(Vertex2.position) * VoxelSize;
+		auto V2 = FPolyVoxVector(Vertex2.position) * VoxelSize;
 
 		Indices.Add(Vertices.Add(V2));
 		Indices.Add(Vertices.Add(V1));
 		Indices.Add(Vertices.Add(V0));
 
-		const FVector Edge01 = V1 - V0;
-		const FProcMeshTangent Tangent = FProcMeshTangent(Edge01.GetSafeNormal(), false);
+		const auto Edge01 = V1 - V0;
+		const auto Tangent = FProcMeshTangent(Edge01.GetSafeNormal(), false);
 
 		Tangents.Add(Tangent);
 		Tangents.Add(Tangent);
@@ -115,8 +115,8 @@ void AVoxelWorld::GenerateWorld()
 
 		if (FlatShading)
 		{
-			const FVector Edge02 = V2 - V0;
-			const FVector Normal = (Edge01 ^ Edge02).GetSafeNormal();
+			const auto Edge02 = V2 - V0;
+			const auto Normal = (Edge01 ^ Edge02).GetSafeNormal();
 			Normals.Add(Normal);
 			Normals.Add(Normal);
 			Normals.Add(Normal);
