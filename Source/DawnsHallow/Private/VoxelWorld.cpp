@@ -4,6 +4,7 @@
 #include "VoxelWorld.h"
 #include "RawVolume.h"
 #include "MarchingCubesSurfaceExtractor.h"
+#include "TerrainPager.h"
 
 using namespace PolyVox;
 
@@ -70,23 +71,10 @@ void AVoxelWorld::Tick(float DeltaTime)
 
 void AVoxelWorld::GenerateWorld()
 {
-	RawVolume<float> volData(Region(Vector3DInt32(0, 0, 0), Vector3DInt32(126, 126, 126)));
+	VoxelVolume = MakeShareable(new PagedVolume<float>(new TerrainPager(NoiseGenerator, Amplitude)));
 
-	for (int32 X = 0; X < volData.getWidth(); X++)
-	{
-		for (int32 Y = 0; Y < volData.getHeight(); Y++)
-		{
-			float Noise = NoiseGenerator->GetNoise2D(X, Y);
-			for (int32 Z = 0; Z < volData.getDepth(); Z++)
-			{
-				// float Value = Z - NoiseGenerator->GetNoise2D(X, Y) * 100.0f;
-				float Value = Z - Noise * Amplitude;
-				volData.setVoxel(X, Y, Z, Value * -1);
-			}
-		}
-	}
-
-	auto ExtractedMesh = extractMarchingCubesMesh(&volData, volData.getEnclosingRegion());
+	Region ToExtract(Vector3DInt32(0, 0, 0), Vector3DInt32(127, 127, 127));
+	auto ExtractedMesh = extractMarchingCubesMesh(VoxelVolume.Get(), ToExtract);
 	auto DecodedMesh = decodeMesh(ExtractedMesh);
 
 	auto Vertices = TArray<FVector>();

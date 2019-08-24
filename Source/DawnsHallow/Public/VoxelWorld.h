@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "PagedVolume.h"
 #include "ProceduralMeshComponent.h"
 #include "UFNNoiseGenerator.h"
 #include "VoxelWorld.generated.h"
 
 UCLASS(Blueprintable)
-	class DAWNSHALLOW_API AVoxelWorld : public AActor
+class DAWNSHALLOW_API AVoxelWorld : public AActor
 {
 	GENERATED_BODY()
 
@@ -42,4 +43,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	bool FlatShading = false;
+
+private:
+	TSharedPtr<PolyVox::PagedVolume<float>> VoxelVolume;
 };
